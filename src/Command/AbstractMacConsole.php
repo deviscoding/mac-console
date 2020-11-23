@@ -124,6 +124,17 @@ abstract class AbstractMacConsole extends AbstractConsole
     return $this->_MacUser;
   }
 
+  protected function openAsConsoleUser($toOpen)
+  {
+    $launchctl = $this->getBinaryPath('launchctl');
+    $open      = $this->getBinaryPath('open');
+    $id        = $this->getLaunchUserId();
+    $method    = $this->getLaunchMethod();
+    $command   = sprintf('%s %s %s %s "%s" > /dev/null 2>&1 &', $launchctl, $method, $id, $open, $toOpen);
+
+    exec($command);
+  }
+
   // region //////////////////////////////////////////////// Convenience Methods
 
   /**
