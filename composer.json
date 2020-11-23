@@ -1,0 +1,25 @@
+{
+    "name": "deviscoding/mac-console",
+    "description": "Parent class with convenience functions for creating macOS CLI commands using the Symfony console component.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "AMJones",
+            "email": "am@jonesiscoding.com"
+        }
+    ],
+    "version": "1.0",
+    "autoload": {
+        "psr-4": {
+            "DevCoding\\Mac\\": "src"
+        }
+    },
+    "require": {
+        "php": "^7.0",
+        "ext-json": "^1.7",
+        "ext-posix": "^7.3",
+        "jonesiscoding/base-console": "^1.0",
+        "phlak/semver": "^3.2"
+    }
+}
