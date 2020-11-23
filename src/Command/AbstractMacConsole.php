@@ -34,7 +34,7 @@ abstract class AbstractMacConsole extends AbstractConsole
    */
   abstract protected function isAllowUserOption();
 
-  public function configure()
+  protected function configure()
   {
     if ($this->isAllowUserOption())
     {
