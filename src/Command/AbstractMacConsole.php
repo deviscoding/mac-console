@@ -7,7 +7,9 @@ use DevCoding\Mac\Objects\MacDevice;
 use DevCoding\Mac\Objects\MacOs;
 use DevCoding\Mac\Objects\MacUser;
 use DevCoding\Mac\Utility\MacShellTrait;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class AbstractMacConsole.
@@ -42,6 +44,19 @@ abstract class AbstractMacConsole extends AbstractConsole
     }
 
     parent::configure();
+  }
+
+  protected function interact(InputInterface $input, OutputInterface $output)
+  {
+    if ($this->isAllowUserOption() && $input->hasOption(self::OPTION_USER))
+    {
+      if ($user = $input->getOption(self::OPTION_USER))
+      {
+        $this->_user = $user;
+      }
+    }
+
+    parent::interact($input, $output);
   }
 
   // region //////////////////////////////////////////////// Software Methods
