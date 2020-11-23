@@ -9,7 +9,7 @@ class MacUser
   use MacShellTrait;
 
   const TEMPLATE_UDIR    = '/Users/%s';
-  const TEMPLATE_LIBRARY = '%s/Libary';
+  const TEMPLATE_LIBRARY = '%s/Library';
 
   /** @var int */
   protected $_id;
@@ -47,7 +47,7 @@ class MacUser
     $MacUser = new MacUser();
     if ($MacUser->isAlphaNumeric($string))
     {
-      return $MacUser->setUsername($MacUser);
+      return $MacUser->setUsername($string);
     }
     elseif (!$throw)
     {

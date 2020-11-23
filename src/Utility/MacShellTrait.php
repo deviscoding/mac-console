@@ -21,7 +21,7 @@ trait MacShellTrait
    *
    * @return string|null
    */
-  protected function getUserId(string $user)
+  protected function getUserId($user)
   {
     return $this->getShellExec(sprintf('/usr/bin/id -u %s', $user));
   }
