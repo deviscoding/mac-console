@@ -235,6 +235,23 @@ abstract class AbstractMacConsole extends AbstractConsole
     return  PHP_OS === 'Darwin';
   }
 
+  protected function getLaunchUserId()
+  {
+    if ('bsexec' === $this->getLaunchMethod())
+    {
+      return $this->getShellExec(sprintf('/usr/bin/pgrep -x -u "%s" loginwindow', $this->getUser()->getId()));
+    }
+    else
+    {
+      return $this->getUser()->getId();
+    }
+  }
+
+  protected function getLaunchMethod()
+  {
+    return $this->getOs()->getVersion()->getMinor() <= 9 ? 'bsexec' : 'asuser';
+  }
+
   /**
    * @param string $src
    *
