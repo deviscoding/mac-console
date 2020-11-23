@@ -273,4 +273,43 @@ abstract class AbstractMacConsole extends AbstractConsole
       rmdir($src);
     }
   }
+
+  protected function setUserAsOwner($file, MacUser $MacUser, $recursive = false)
+  {
+    $uDir = $MacUser->getDir();
+    if (false === strpos($file, $uDir))
+    {
+      throw new \Exception('You cannot set user ownership of a file that is not below the user directory.');
+    }
+    else
+    {
+      $owner = posix_getpwuid(fileowner($uDir));
+      $group = posix_getgrgid(filegroup($uDir));
+
+      if (!empty($owner['name']) && !empty($group['name']))
+      {
+        chown($file, $owner['name']);
+        chgrp($file, $group['name']);
+
+        if ($recursive)
+        {
+          $dir = dirname($file);
+          while ($dir != $MacUser->getDir() && $dir != $MacUser->getLibrary())
+          {
+            if ($dir === dirname($dir))
+            {
+              throw new \Exception('You cannot recursively set user ownership of a file that is not below the user directory.');
+            }
+
+            chown($file, $owner['name']);
+            chgrp($file, $group['name']);
+
+            $dir = dirname($dir);
+          }
+        }
+      }
+    }
+
+    return $this;
+  }
 }
