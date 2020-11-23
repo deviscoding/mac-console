@@ -153,6 +153,24 @@ abstract class AbstractMacConsole extends AbstractConsole
   }
 
   /**
+   * Determines if the OS version is Mojave or greater.
+   *
+   * @return bool
+   */
+  protected function isMojaveUp()
+  {
+    if ($v = $this->getOs()->getVersion())
+    {
+      if (11 == $v->getMajor() || 10 == $v->getMajor() && $v->getMinor() >= 14)
+      {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * @return bool
    */
   protected function isDisplaySleepPrevented()
