@@ -46,6 +46,17 @@ class MacDevice
   }
 
   /**
+   * Returns free disk space in Gibibyte (1024), as returned by the DF binary.
+   *
+   * @see    https://en.wikipedia.org/wiki/Gibibyte
+   * @return string|null
+   */
+  protected function getFreeDiskSpace()
+  {
+    return $this->getShellExec("/bin/df -g / | /usr/bin/awk '(NR == 2){print $4}'");
+  }
+
+  /**
    * Determines if the system is running off of battery power, or AC power.
    *
    * @return bool
