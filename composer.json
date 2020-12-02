@@ -9,7 +9,7 @@
             "email": "am@jonesiscoding.com"
         }
     ],
-    "version": "1.2.1",
+    "version": "1.2.2",
     "autoload": {
         "psr-4": {
             "DevCoding\\Mac\\": "src"
@@ -20,6 +20,7 @@
         "ext-json": "*",
         "ext-posix": "*",
         "jonesiscoding/base-console": "^1.0",
-        "phlak/semver": "^3.2"
+        "phlak/semver": "^3.2",
+        "symfony/process": "^4.4"
     }
 }

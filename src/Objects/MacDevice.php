@@ -3,6 +3,7 @@
 namespace DevCoding\Mac\Objects;
 
 use DevCoding\Mac\Utility\ShellTrait;
+use Symfony\Component\Process\Process;
 
 class MacDevice
 {
