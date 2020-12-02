@@ -51,7 +51,7 @@ class MacDevice
    * @see    https://en.wikipedia.org/wiki/Gibibyte
    * @return string|null
    */
-  protected function getFreeDiskSpace()
+  public function getFreeDiskSpace()
   {
     return $this->getShellExec("/bin/df -g / | /usr/bin/awk '(NR == 2){print $4}'");
   }
