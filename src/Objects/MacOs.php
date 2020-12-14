@@ -34,7 +34,7 @@ class MacOs
    */
   public function isEncryptingFileVault()
   {
-    $fv = $this->getShellExec('/usr/bin/fdesetup status');
+    $fv = $this->getProcessOutput('/usr/bin/fdesetup status');
 
     return false !== strpos($fv, 'Encryption in progress');
   }
