@@ -19,6 +19,8 @@ trait MacShellTrait
   /**
    * Returns the user id of the given username.
    *
+   * @param string $user
+   *
    * @return string|null
    */
   protected function getUserId($user)

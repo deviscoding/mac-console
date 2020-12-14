@@ -6,6 +6,8 @@ use Symfony\Component\Process\Process;
 
 trait ShellTrait
 {
+  protected $_binCache;
+
   /**
    * Checks if the given string is alphanumeric.
    *
@@ -22,25 +24,34 @@ trait ShellTrait
    * Attempts to find a binary path from the given string.  Command names may ONLY contain alphanumeric characters.
    *
    * @param string $bin
+   * @param bool   $throw
    *
    * @return string the full path to the binary
    *
    * @throws \Exception
    */
-  protected function getBinaryPath($bin)
+  protected function getBinaryPath($bin, $throw = true)
   {
     if (!$this->isAlphaNumeric($bin))
     {
       throw new \Exception("Not here you don't, Buster.");
     }
 
-    $output = $this->getShellExec('which '.$bin);
-    if (!$output || !is_file(trim($output)))
+    if (empty($this->_binCache[$bin]))
     {
-      throw new \Exception(sprintf('Could not locate "%s" binary.', $bin));
+      $output = $this->getShellExec('which '.$bin);
+
+      if ($throw && !($output && is_file(trim($output))))
+      {
+        throw new \Exception(sprintf('Could not locate "%s" binary.', $bin));
+      }
+      else
+      {
+        $this->_binCache[$bin] = $output;
+      }
     }
 
-    return $output;
+    return $this->_binCache[$bin];
   }
 
   protected function getShellExec($cmd, $default = null)

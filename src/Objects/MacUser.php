@@ -84,7 +84,7 @@ class MacUser
   {
     if (empty($this->_id))
     {
-      $this->_id = (int) $this->getShellExec(sprintf('/usr/bin/id -u %s', $this->getUserName()));
+      $this->_id = (int) $this->getUserId($this->getUserName());
     }
 
     return $this->_id;

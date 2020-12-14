@@ -18,7 +18,7 @@ class MacOs
   {
     if (empty($this->_darwin))
     {
-      if ($v = $this->getShellExec('sw_vers -productVersion'))
+      if ($v = $this->getShellExec('/usr/bin/sw_vers -productVersion'))
       {
         $this->_darwin = new MacOsVersion($v);
       }
@@ -34,7 +34,7 @@ class MacOs
    */
   public function isEncryptingFileVault()
   {
-    $fv = $this->getProcessOutput('/usr/bin/fdesetup status');
+    $fv = is_file('/usr/bin/fdesetup') ? $this->getProcessOutput('/usr/bin/fdesetup status') : '';
 
     return false !== strpos($fv, 'Encryption in progress');
   }

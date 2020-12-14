@@ -5,6 +5,11 @@ namespace DevCoding\Mac\Objects;
 use DevCoding\Mac\Utility\ShellTrait;
 use Symfony\Component\Process\Process;
 
+/**
+ * Class MacDevice.
+ *
+ * @package DevCoding\Mac\Objects
+ */
 class MacDevice
 {
   use ShellTrait;
@@ -40,7 +45,7 @@ class MacDevice
   {
     if (empty($this->_cores))
     {
-      $this->_cores = (int) $this->getShellExec('sysctl -n hw.physicalcpu');
+      $this->_cores = (int) $this->getShellExec('/usr/sbin/sysctl -n hw.physicalcpu');
     }
 
     return $this->_cores;
@@ -50,6 +55,7 @@ class MacDevice
    * Returns free disk space in Gibibyte (1024), as returned by the DF binary.
    *
    * @see    https://en.wikipedia.org/wiki/Gibibyte
+   *
    * @return string|null
    */
   public function getFreeDiskSpace()
@@ -118,12 +124,15 @@ class MacDevice
   {
     if (is_null($this->_secureBoot))
     {
-      $P = Process::fromShellCommandline("nvram 94b73556-2197-4702-82a8-3e1337dafbfb:AppleSecureBootPolicy | awk '{ print $2 }'");
-      $P->run();
-
-      if ($P->isSuccessful())
+      if (is_file('/usr/sbin/nvram'))
       {
-        $this->_secureBoot = (false !== strpos($P->getOutput(), '%02'));
+        $P = Process::fromShellCommandline("/usr/sbin/nvram 94b73556-2197-4702-82a8-3e1337dafbfb:AppleSecureBootPolicy | awk '{ print $2 }'");
+        $P->run();
+
+        if ($P->isSuccessful())
+        {
+          $this->_secureBoot = (false !== strpos($P->getOutput(), '%02'));
+        }
       }
     }
 
