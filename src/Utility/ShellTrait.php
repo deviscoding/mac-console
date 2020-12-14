@@ -2,6 +2,8 @@
 
 namespace DevCoding\Mac\Utility;
 
+use Symfony\Component\Process\Process;
+
 trait ShellTrait
 {
   /**
@@ -44,5 +46,19 @@ trait ShellTrait
   protected function getShellExec($cmd, $default = null)
   {
     return (($x = shell_exec($cmd)) && !empty($x)) ? trim($x) : $default;
+  }
+
+  /**
+   * @param string $cmd
+   * @param mixed  $default
+   *
+   * @return string|null
+   */
+  protected function getProcessOutput($cmd, $default = null)
+  {
+    $P = Process::fromShellCommandline($cmd);
+    $P->run();
+
+    return $P->isSuccessful() && ($o = $P->getOutput()) && !empty($o) ? trim($o) : $default;
   }
 }
