@@ -10,6 +10,13 @@ class MacOs
 
   /** @var MacOsVersion */
   protected $_darwin;
+  /** @var MacUser */
+  protected $_user;
+
+  public function __clone()
+  {
+    $this->_user = null;
+  }
 
   /**
    * @return MacOsVersion|null
@@ -37,5 +44,13 @@ class MacOs
     $fv = is_file('/usr/bin/fdesetup') ? $this->getProcessOutput('/usr/bin/fdesetup status') : '';
 
     return false !== strpos($fv, 'Encryption in progress');
+  }
+
+  protected function withUser(MacUser $macUser)
+  {
+    $clone        = clone  $this;
+    $clone->_user = $macUser;
+
+    return $clone;
   }
 }
