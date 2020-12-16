@@ -22,6 +22,21 @@ class MacDevice
   protected $_secureBoot;
   /** @var MacOs */
   protected $_OS;
+  /** @var MacNetworkSubsystem */
+  protected $_Network;
+
+  /**
+   * @return MacNetworkSubsystem
+   */
+  public function getNetwork()
+  {
+    if (is_null($this->_Network))
+    {
+      $this->_Network = new MacNetworkSubsystem();
+    }
+
+    return $this->_Network;
+  }
 
   /**
    * @return MacOs
