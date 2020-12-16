@@ -160,7 +160,7 @@ class MacUser
    *
    * @throws \Exception
    */
-  protected function setPasswordInKeychain($key, $pw)
+  public function setPasswordInKeychain($key, $pw)
   {
     if ($security = $this->getBinaryPath('security'))
     {
