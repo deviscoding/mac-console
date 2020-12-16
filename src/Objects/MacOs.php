@@ -19,6 +19,68 @@ class MacOs
   }
 
   /**
+   * @param string $app
+   *
+   * @return MacApplication
+   */
+  protected function getApplication($app)
+  {
+    if ($apps = $this->getApplications())
+    {
+      foreach ($apps as $MacApplication)
+      {
+        if ($MacApplication->getFilename() == $app)
+        {
+          return $MacApplication;
+        }
+        elseif ($MacApplication->getBasename('.app') == $app)
+        {
+          return $MacApplication;
+        }
+        elseif ($MacApplication->getIdentifier() == $app)
+        {
+          return $MacApplication;
+        }
+        elseif ($MacApplication->getPathname() == $app)
+        {
+          return $MacApplication;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * @return MacApplication[]
+   */
+  protected function getApplications()
+  {
+    if ($list = $this->getShellExec('mdfind "kMDItemKind == \'Application\'"'))
+    {
+      $apps  = [];
+      $lines = explode("\n", $list);
+
+      foreach ($lines as $line)
+      {
+        $apps[] = new MacApplication($line);
+      }
+
+      return $apps;
+    }
+
+    return null;
+  }
+
+  /**
+   * @return MacUser
+   */
+  public function getUser()
+  {
+    return $this->_user;
+  }
+
+  /**
    * @return MacOsVersion|null
    */
   public function getVersion()
