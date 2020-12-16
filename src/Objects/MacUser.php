@@ -112,6 +112,33 @@ class MacUser
   }
 
   /**
+   * @param string $key The name of the password in the keychain
+   *
+   * @return string|null The retrieved password
+   *
+   * @throws \Exception If the security binary isn't present
+   */
+  public function getPasswordFromKeychain($key)
+  {
+    if ($security = $this->getBinaryPath('security'))
+    {
+      $cmd = sprintf('%s -q find-generic-password -a %s -s %s -w', $security, $this->getUserName(), $key);
+
+      exec($cmd, $output, $retval);
+
+      if (0 === $retval && !empty($output))
+      {
+        if (!empty($output[0]))
+        {
+          return $output[0];
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * @param mixed $id
    *
    * @return MacUser
@@ -121,6 +148,33 @@ class MacUser
     $this->_id = $id;
 
     return $this;
+  }
+
+  /**
+   * Saves a password in the user's macOS keychain.
+   *
+   * @param string $key the name of the password in keychain
+   * @param string $pw  the password itself
+   *
+   * @return $this
+   *
+   * @throws \Exception
+   */
+  protected function setPasswordInKeychain($key, $pw)
+  {
+    if ($security = $this->getBinaryPath('security'))
+    {
+      $cmd = sprintf('%s add-generic-password -a %s -s %s -w %s', $security, $this->getUserName(), $key, $pw);
+
+      exec($cmd, $output, $retval);
+
+      if (0 === $retval)
+      {
+        return $this;
+      }
+    }
+
+    throw new \Exception('Could not save password in keychain.');
   }
 
   /**
