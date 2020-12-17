@@ -2,7 +2,7 @@
 
 namespace DevCoding\Mac\Objects;
 
-use DevCoding\Mac\Utility\ShellTrait;
+use DevCoding\Command\Base\Traits\ShellTrait;
 use Symfony\Component\Process\Process;
 
 /**

@@ -22,8 +22,6 @@ abstract class AbstractMacConsole extends AbstractConsole
 
   const OPTION_USER = 'user';
 
-  /** @var string[] */
-  protected $_binary;
   /** @var MacDevice */
   protected $_MacDevice;
   /** @var MacUser */
@@ -60,23 +58,6 @@ abstract class AbstractMacConsole extends AbstractConsole
   }
 
   // region //////////////////////////////////////////////// Software Methods
-
-  /**
-   * @param string $bin
-   *
-   * @return string
-   *
-   * @throws \Exception
-   */
-  protected function getBinaryPath($bin)
-  {
-    if (empty($this->_binary[$bin]))
-    {
-      $this->_binary[$bin] = parent::getBinaryPath($bin);
-    }
-
-    return $this->_binary[$bin];
-  }
 
   /**
    * @return MacDevice

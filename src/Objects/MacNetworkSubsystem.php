@@ -2,11 +2,11 @@
 
 namespace DevCoding\Mac\Objects;
 
-use DevCoding\Mac\Utility\MacShellTrait;
+use DevCoding\Command\Base\Traits\ShellTrait;
 
 class MacNetworkSubsystem
 {
-  use MacShellTrait;
+  use ShellTrait;
 
   const NETWORKSETUP = '/usr/sbin/networksetup -listallhardwareports';
 

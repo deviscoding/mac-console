@@ -2,12 +2,12 @@
 
 namespace DevCoding\Mac\Objects;
 
-use DevCoding\Mac\Utility\MacShellTrait;
+use DevCoding\Command\Base\Traits\ShellTrait;
 use PHLAK\SemVer\Version;
 
 class MacApplication extends \SplFileInfo
 {
-  use MacShellTrait;
+  use ShellTrait;
 
   public function getCopyright()
   {
