@@ -73,6 +73,17 @@ class MacOs
   }
 
   /**
+   * @return string|null
+   */
+  public function getSoftwareUpdateCatalogUrl()
+  {
+    $cmd = '/usr/bin/defaults read "/Library/Managed Preferences/com.apple.SoftwareUpdate" CatalogURL 2>"/dev/null"';
+    $url = $this->getShellExec($cmd);
+
+    return (!empty($url) && 'None' != $url) ? $url : null;
+  }
+
+  /**
    * @return MacUser
    */
   public function getUser()
