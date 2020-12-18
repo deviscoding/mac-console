@@ -127,6 +127,25 @@ abstract class AbstractMacConsole extends AbstractConsole
   }
 
   /**
+   * Determines if the OS version is Big Sur or greater.
+   *
+   * @return bool
+   */
+  protected function isBigSurUp()
+  {
+    if ($v = $this->getOs()->getVersion())
+    {
+      // In some early testing, the version returned was 10.18 or something silly
+      if (11 == $v->getMajor() || 10 == $v->getMajor() && $v->getMinor() >= 16)
+      {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Determines if the OS version is Catalina or greater.
    *
    * @return bool
