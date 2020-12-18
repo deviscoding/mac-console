@@ -23,7 +23,7 @@ class MacOs
    *
    * @return MacApplication
    */
-  protected function getApplication($app)
+  public function getApplication($app)
   {
     if ($apps = $this->getApplications())
     {
@@ -54,7 +54,7 @@ class MacOs
   /**
    * @return MacApplication[]
    */
-  protected function getApplications()
+  public function getApplications()
   {
     if ($list = $this->getShellExec('mdfind "kMDItemKind == \'Application\'"'))
     {
