@@ -84,6 +84,22 @@ class MacOs
   }
 
   /**
+   * @return string[]|null
+   */
+  public function getSharedCaches()
+  {
+    return $this->getAssetCacheLocators('shared');
+  }
+
+  /**
+   * @return string[]|null
+   */
+  public function getPersonalCaches()
+  {
+    return $this->getAssetCacheLocators('personal');
+  }
+
+  /**
    * @return MacUser
    */
   public function getUser()
@@ -125,5 +141,22 @@ class MacOs
     $clone->_user = $macUser;
 
     return $clone;
+  }
+
+  /**
+   * @param string $key
+   *
+   * @return string[]|null
+   */
+  protected function getAssetCacheLocators($key)
+  {
+    $bin = '/usr/bin/AssetCacheLocatorUtil';
+    if (file_exists($bin))
+    {
+      $cmd = sprintf("%s 2>&1 | grep guid | grep '%s caching: yes' | awk '{print$4}' | sed 's/^\(.*\):.*$/\1/' | uniq", $bin, $key);
+      $ips = $this->getShellExec($cmd);
+    }
+
+    return !empty($ips) ? explode("\n", $ips) : null;
   }
 }

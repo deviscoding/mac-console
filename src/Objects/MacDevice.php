@@ -12,6 +12,9 @@ use Symfony\Component\Process\Process;
  */
 class MacDevice
 {
+  const CPU_INTEL = 'intel';
+  const CPU_APPLE = 'apple';
+
   use ShellTrait;
 
   /** @var int */
@@ -24,6 +27,8 @@ class MacDevice
   protected $_OS;
   /** @var MacNetworkSubsystem */
   protected $_Network;
+  /** @var string[] */
+  protected $_SPHardwareDataType;
 
   /**
    * @return MacNetworkSubsystem
@@ -67,6 +72,29 @@ class MacDevice
   }
 
   /**
+   * @return string|null
+   */
+  public function getCpuType()
+  {
+    $cmd = '/usr/bin/uname -m';
+    if ($cpu = $this->getShellExec($cmd))
+    {
+      switch ($cpu)
+      {
+        case 'x86_64':
+        case 'i386':
+          return self::CPU_INTEL;
+        case 'arm64':
+          return self::CPU_APPLE;
+        default:
+          break;
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Returns free disk space in Gibibyte (1024), as returned by the DF binary.
    *
    * @see    https://en.wikipedia.org/wiki/Gibibyte
@@ -76,6 +104,54 @@ class MacDevice
   public function getFreeDiskSpace()
   {
     return $this->getShellExec("/bin/df -g / | /usr/bin/awk '(NR == 2){print $4}'");
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getModelIdentifier()
+  {
+    return $this->getSpHardwareDataType('model_identifier');
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getModelName()
+  {
+    return $this->getSpHardwareDataType('model_name');
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getProcessorName()
+  {
+    return $this->getSpHardwareDataType('processor_name');
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getProcessorSpeed()
+  {
+    return $this->getSpHardwareDataType('processor_speed');
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getSerialNumber()
+  {
+    return $this->getSpHardwareDataType('serial_number_system');
+  }
+
+  /**
+   * @return bool
+   */
+  public function isAppleChip()
+  {
+    return self::CPU_APPLE == $this->getCpuType();
   }
 
   /**
@@ -104,6 +180,14 @@ class MacDevice
   }
 
   /**
+   * @return bool
+   */
+  public function isIntelChip()
+  {
+    return self::CPU_INTEL == $this->getCpuType();
+  }
+
+  /**
    * Determines if running on a Mac.
    *
    * @return bool
@@ -111,6 +195,14 @@ class MacDevice
   public function isMac()
   {
     return  PHP_OS === 'Darwin';
+  }
+
+  /**
+   * @return bool
+   */
+  public function isMacBook()
+  {
+    return false !== strpos($this->getModelName(), 'MacBook');
   }
 
   /**
@@ -152,5 +244,42 @@ class MacDevice
     }
 
     return $this->_secureBoot;
+  }
+
+  /**
+   * @param string|null $key
+   *
+   * @return string[]|string
+   */
+  protected function getSpHardwareDataType($key = null)
+  {
+    if (is_null($this->_SPHardwareDataType))
+    {
+      if ($result = $this->getShellExec('system_profiler SPHardwareDataType | grep ": "'))
+      {
+        if (preg_match_all('#\s*([^:]+):\s(.*)#', $result, $matches, PREG_SET_ORDER))
+        {
+          foreach ($matches as $match)
+          {
+            $key = !empty($match[1]) ? preg_replace('~(?<=\\w)([A-Z])~u', '_$1', $match[1]) : null;
+            $val = !empty($match[2]) ? $match[2] : null;
+
+            if ($key && $val)
+            {
+              $this->_SPHardwareDataType[$key] = $val;
+            }
+          }
+        }
+      }
+    }
+
+    if ($key)
+    {
+      return !empty($this->_SPHardwareDataType[$key]) ? $this->_SPHardwareDataType[$key] : null;
+    }
+    else
+    {
+      return $this->_SPHardwareDataType;
+    }
   }
 }
