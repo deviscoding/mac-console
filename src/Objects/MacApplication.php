@@ -19,7 +19,7 @@ class MacApplication extends \SplFileInfo
    */
   public function getName()
   {
-    return $this->getPlistValue('CFBundleName');
+    return ($name = $this->getPlistValue('CFBundleName')) ? $name : $this->getBasename('.app');
   }
 
   /**
