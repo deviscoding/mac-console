@@ -12,10 +12,10 @@ use Symfony\Component\Process\Process;
  */
 class MacDevice
 {
+  use ShellTrait;
+
   const CPU_INTEL = 'intel';
   const CPU_APPLE = 'apple';
-
-  use ShellTrait;
 
   /** @var int */
   protected $_cores;
@@ -143,7 +143,7 @@ class MacDevice
    */
   public function getSerialNumber()
   {
-    return $this->getSpHardwareDataType('serial_number_system');
+    return $this->getSpHardwareDataType('serial_number');
   }
 
   /**
@@ -247,11 +247,11 @@ class MacDevice
   }
 
   /**
-   * @param string|null $key
+   * @param string|null $tKey
    *
    * @return string[]|string
    */
-  protected function getSpHardwareDataType($key = null)
+  protected function getSpHardwareDataType($tKey = null)
   {
     if (is_null($this->_SPHardwareDataType))
     {
@@ -261,21 +261,24 @@ class MacDevice
         {
           foreach ($matches as $match)
           {
-            $key = !empty($match[1]) ? preg_replace('~(?<=\\w)([A-Z])~u', '_$1', $match[1]) : null;
-            $val = !empty($match[2]) ? $match[2] : null;
-
-            if ($key && $val)
+            if (!empty($match[1]) && !empty($match[2]))
             {
-              $this->_SPHardwareDataType[$key] = $val;
+              $key = strtolower($match[1]);
+              $key = str_replace(' (system)', '', $key);
+              $key = str_replace(['(', ')'], '', $key);
+              $key = str_replace(['number of ', ' per core'], ['', '_core'], $key);
+              $key = str_replace([' ', '-'], '_', $key);
+
+              $this->_SPHardwareDataType[$key] = $match[2];
             }
           }
         }
       }
     }
 
-    if ($key)
+    if ($tKey)
     {
-      return !empty($this->_SPHardwareDataType[$key]) ? $this->_SPHardwareDataType[$key] : null;
+      return !empty($this->_SPHardwareDataType[$tKey]) ? $this->_SPHardwareDataType[$tKey] : null;
     }
     else
     {
