@@ -9,6 +9,25 @@ class MacApplication extends \SplFileInfo
 {
   use ShellTrait;
 
+  /**
+   * @return bool
+   */
+  public function isUserApp()
+  {
+    return preg_match('#/Users/([^/]+)/Applications#', $this->getPath());
+  }
+
+  /**
+   * @return bool
+   */
+  public function isSystemApp()
+  {
+    return 0 === strpos($this->getPath(), '/System') || 0 === strpos($this->getPath(), '/Library');
+  }
+
+  /**
+   * @return string|null
+   */
   public function getCopyright()
   {
     return $this->getPlistValue('NSHumanReadableCopyright');
