@@ -32,6 +32,16 @@ class MacOsVersion extends SemanticVersion
     }
   }
 
+  /**
+   * Override to remove build and pre-release from string version.
+   *
+   * @return string Current version string
+   */
+  public function __toString(): string
+  {
+    return implode('.', [$this->major, $this->minor, $this->patch]);
+  }
+
   public function getName()
   {
     $major = (string) $this->getMajor();
