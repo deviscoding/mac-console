@@ -2,9 +2,7 @@
 
 namespace DevCoding\Mac\Objects;
 
-use PHLAK\SemVer\Version;
-
-class MacOsVersion extends Version
+class MacOsVersion extends SemanticVersion
 {
   const NAMES = [
       '10' => [
@@ -24,19 +22,14 @@ class MacOsVersion extends Version
       ],
   ];
 
-  public function getMajor()
+  public function __construct($version = '0.1.0', $build = null)
   {
-    return $this->major;
-  }
+    parent::__construct($version);
 
-  public function getMinor()
-  {
-    return $this->minor;
-  }
-
-  public function getRevision()
-  {
-    return $this->patch;
+    if (!empty($build))
+    {
+      $this->setBuild($build);
+    }
   }
 
   public function getName()

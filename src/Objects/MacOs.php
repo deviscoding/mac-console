@@ -116,7 +116,14 @@ class MacOs
     {
       if ($v = $this->getShellExec('/usr/bin/sw_vers -productVersion'))
       {
-        $this->_darwin = new MacOsVersion($v);
+        if ($b = $this->getShellExec('/usr/bin/sw_vers -buildVersion'))
+        {
+          $this->_darwin = new MacOsVersion($v, $b);
+        }
+        else
+        {
+          $this->_darwin = new MacOsVersion($v);
+        }
       }
     }
 
