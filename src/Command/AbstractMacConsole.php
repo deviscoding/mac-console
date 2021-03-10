@@ -243,7 +243,7 @@ abstract class AbstractMacConsole extends AbstractConsole
    */
   public function isMac()
   {
-    return  PHP_OS === 'Darwin';
+    return PHP_OS === 'Darwin';
   }
 
   protected function getLaunchUserId()

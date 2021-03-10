@@ -14,21 +14,33 @@ class MacApplication extends \SplFileInfo
     return $this->getPlistValue('NSHumanReadableCopyright');
   }
 
+  /**
+   * @return string
+   */
   public function getName()
   {
     return $this->getPlistValue('CFBundleName');
   }
 
+  /**
+   * @return string|null
+   */
   public function getIdentifier()
   {
     return $this->getPlistValue('CFBundleIdentifier');
   }
 
-  protected function getShortVersion()
+  /**
+   * @return SemanticVersion|Version|null
+   */
+  public function getShortVersion()
   {
     return new Version($this->getPlistValue('CFBundleShortVersionString'));
   }
 
+  /**
+   * @return SemanticVersion|Version|null
+   */
   public function getVersion()
   {
     return new Version($this->getPlistValue('CFBundleVersion'));

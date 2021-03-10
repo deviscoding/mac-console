@@ -194,7 +194,7 @@ class MacDevice
    */
   public function isMac()
   {
-    return  PHP_OS === 'Darwin';
+    return PHP_OS === 'Darwin';
   }
 
   /**

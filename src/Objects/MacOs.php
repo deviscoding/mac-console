@@ -137,7 +137,7 @@ class MacOs
 
   protected function withUser(MacUser $macUser)
   {
-    $clone        = clone  $this;
+    $clone        = clone $this;
     $clone->_user = $macUser;
 
     return $clone;

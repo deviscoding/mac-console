@@ -2,7 +2,7 @@
 
 namespace DevCoding\Mac\Utility;
 
-use \DevCoding\Command\Base\Traits\ShellTrait;
+use DevCoding\Command\Base\Traits\ShellTrait;
 
 trait MacShellTrait
 {
