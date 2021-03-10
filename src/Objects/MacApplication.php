@@ -35,7 +35,14 @@ class MacApplication extends \SplFileInfo
    */
   public function getShortVersion()
   {
-    return new Version($this->getPlistValue('CFBundleShortVersionString'));
+    try
+    {
+      return SemanticVersion::parse($this->getPlistValue('CFBundleShortVersionString'));
+    }
+    catch (\Exception $e)
+    {
+      return null;
+    }
   }
 
   /**
@@ -43,12 +50,19 @@ class MacApplication extends \SplFileInfo
    */
   public function getVersion()
   {
-    return new Version($this->getPlistValue('CFBundleVersion'));
+    try
+    {
+      return SemanticVersion::parse($this->getPlistValue('CFBundleVersion'));
+    }
+    catch (\Exception $e)
+    {
+      return null;
+    }
   }
 
   protected function getPlistValue($key)
   {
-    return $this->getShellExec(sprintf('defaults read %s %s', $this->getInfoPath(), $key));
+    return $this->getShellExec(sprintf('defaults read "%s" %s 2>/dev/null', $this->getInfoPath(), $key));
   }
 
   public function getInfoPath()
