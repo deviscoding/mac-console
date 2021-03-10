@@ -6,15 +6,33 @@ use PHLAK\SemVer\Version;
 
 class SemanticVersion extends Version
 {
+  protected $raw;
+
   public function __construct(string $version = '0.1.0')
   {
+    $this->raw = $version;
+
     try
     {
       parent::__construct($version);
     }
     catch (\Exception $e)
     {
-      $Fix = static::parse($version);
+      try
+      {
+        // Try the built in fixer
+        $Fix = static::parse($version);
+      }
+      catch (\Exception $e)
+      {
+        // Too many dots
+        $v = explode('.', $version);
+        if (count($v) > 3)
+        {
+          $version = array_shift($v) . "." . array_shift($v) . '.' . implode('', $v);
+          $Fix = static::parse($version);
+        }
+      }
 
       $this->setMajor($Fix->major);
       $this->setMinor($Fix->minor);
@@ -22,6 +40,11 @@ class SemanticVersion extends Version
       $this->setPreRelease($Fix->preRelease);
       $this->setbuild($Fix->build);
     }
+  }
+
+  public function getRaw()
+  {
+    return $this->raw;
   }
 
   public function getBuild()

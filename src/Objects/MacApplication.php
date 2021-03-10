@@ -56,7 +56,7 @@ class MacApplication extends \SplFileInfo
   {
     try
     {
-      return SemanticVersion::parse($this->getPlistValue('CFBundleShortVersionString'));
+      return new SemanticVersion($this->getPlistValue('CFBundleShortVersionString'));
     }
     catch (\Exception $e)
     {
@@ -71,7 +71,7 @@ class MacApplication extends \SplFileInfo
   {
     try
     {
-      return SemanticVersion::parse($this->getPlistValue('CFBundleVersion'));
+      return new SemanticVersion($this->getPlistValue('CFBundleVersion'));
     }
     catch (\Exception $e)
     {
