@@ -153,7 +153,7 @@ class MacOs
     $bin = '/usr/bin/AssetCacheLocatorUtil';
     if (file_exists($bin))
     {
-      $cmd = sprintf("%s 2>&1 | grep guid | grep '%s caching: yes' | awk '{print$4}' | sed 's/^\(.*\):.*$/\1/' | uniq", $bin, $key);
+      $cmd = sprintf("%s 2>&1 | grep guid | grep '%s caching: yes' | awk '{print\$4}' | sed 's/^\(.*\):.*\$/\\1/' | uniq", $bin, $key);
       $ips = $this->getShellExec($cmd);
     }
 
