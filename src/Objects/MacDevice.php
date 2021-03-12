@@ -155,15 +155,31 @@ class MacDevice
   }
 
   /**
+   * @return MacBattery
+   */
+  public function getBattery()
+  {
+    return new MacBattery();
+  }
+
+  public function getCharger()
+  {
+    return new MacCharger();
+  }
+
+  public function isAcPowered()
+  {
+    return false === $this->isBatteryPowered();
+  }
+
+  /**
    * Determines if the system is running off of battery power, or AC power.
    *
    * @return bool
    */
   public function isBatteryPowered()
   {
-    $battery = $this->getShellExec('/usr/bin/pmset -g ps');
-
-    return false !== strpos($battery, 'Battery Power');
+    return $this->getBattery()->isActive();
   }
 
   /**
