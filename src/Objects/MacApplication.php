@@ -30,7 +30,7 @@ class MacApplication extends \SplFileInfo
    */
   public function getCopyright()
   {
-    return $this->getPlistValue('NSHumanReadableCopyright');
+    return str_replace('\251', '©', $this->getPlistValue('NSHumanReadableCopyright'));
   }
 
   /**
