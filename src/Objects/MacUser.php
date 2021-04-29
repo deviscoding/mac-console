@@ -72,7 +72,7 @@ class MacUser
   {
     if (empty($this->_dir))
     {
-      $this->_dir = $this->getShellExec('~' . $this->getUserName());
+      $this->_dir = $this->getShellExec('echo ~' . $this->getUserName());
     }
 
     return $this->_dir;
