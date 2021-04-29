@@ -159,7 +159,10 @@ class MacUser
    */
   public function setId($id)
   {
-    $this->_id = $id;
+    $this->_id       = $id;
+    $this->_dir      = null;
+    $this->_realName = null;
+    $this->_library  = null;
 
     return $this;
   }
@@ -199,6 +202,9 @@ class MacUser
   public function setUsername($username)
   {
     $this->_username = $username;
+    $this->_dir      = null;
+    $this->_realName = null;
+    $this->_library  = null;
 
     return $this;
   }
