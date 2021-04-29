@@ -15,6 +15,8 @@ class MacUser
   /** @var string */
   protected $_username;
   /** @var string */
+  protected $_realName;
+  /** @var string */
   protected $_dir;
   /** @var string */
   protected $_library;
@@ -108,6 +110,19 @@ class MacUser
   public function getUserName()
   {
     return $this->_username;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getRealName()
+  {
+    if (empty($this->_realName))
+    {
+      $this->_realName = $this->getShellExec("/usr/bin/dscl . -read " . $this->getDir() . " RealName | sed -n 's/^ //g;2p'");
+    }
+
+    return $this->_realName ?? null;
   }
 
   /**
