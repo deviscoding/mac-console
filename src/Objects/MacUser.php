@@ -8,7 +8,6 @@ class MacUser
 {
   use MacShellTrait;
 
-  const TEMPLATE_UDIR    = '/Users/%s';
   const TEMPLATE_LIBRARY = '%s/Library';
 
   /** @var int */
@@ -71,7 +70,7 @@ class MacUser
   {
     if (empty($this->_dir))
     {
-      $this->_dir = sprintf(self::TEMPLATE_UDIR, $this->getUserName());
+      $this->_dir = $this->getShellExec('~' . $this->getUserName());
     }
 
     return $this->_dir;
