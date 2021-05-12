@@ -311,13 +311,13 @@ abstract class AbstractMacConsole extends AbstractConsole
     }
     else
     {
-      $owner = posix_getpwuid(fileowner($uDir));
-      $group = posix_getgrgid(filegroup($uDir));
+      $owner = fileowner($uDir);
+      $group = filegroup($uDir);
 
-      if (!empty($owner['name']) && !empty($group['name']))
+      if (!empty($owner) && !empty($group))
       {
-        chown($file, $owner['name']);
-        chgrp($file, $group['name']);
+        chown($file, $owner);
+        chgrp($file, $group);
 
         if ($recursive)
         {
@@ -329,8 +329,8 @@ abstract class AbstractMacConsole extends AbstractConsole
               throw new \Exception('You cannot recursively set user ownership of a file that is not below the user directory.');
             }
 
-            chown($file, $owner['name']);
-            chgrp($file, $group['name']);
+            chown($file, $owner);
+            chgrp($file, $group);
 
             $dir = dirname($dir);
           }
