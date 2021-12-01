@@ -65,7 +65,7 @@ class MacBattery extends AbstractMacPower
   }
 
   /**
-   * @return int|null
+   * @return string|null
    */
   public function getCycles()
   {

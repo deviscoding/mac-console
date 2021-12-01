@@ -8,6 +8,11 @@ abstract class AbstractMacPower
 {
   use ShellTrait;
 
+  /**
+   * @param string $key
+   *
+   * @return string|null
+   */
   protected function getPowerDataType($key)
   {
     $data = explode("\n", $this->getShellExec('system_profiler SPPowerDataType'));

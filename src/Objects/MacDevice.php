@@ -186,7 +186,7 @@ class MacDevice
    * Determines if the display is prevented from sleeping by an assertation, usually an indicator that a presentation
    * or video conference is currently running.
    *
-   * @return string|null
+   * @return bool
    */
   public function isDisplaySleepPrevented()
   {
@@ -239,7 +239,7 @@ class MacDevice
   }
 
   /**
-   * Determines if the MacOS Secure Boot feature is set to "full".
+   * Determines if the macOS Secure Boot feature is set to "full".
    *
    * @return bool
    */

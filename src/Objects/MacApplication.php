@@ -50,7 +50,7 @@ class MacApplication extends \SplFileInfo
   }
 
   /**
-   * @return SemanticVersion|Version|null
+   * @return SemanticVersion|null
    */
   public function getShortVersion()
   {
@@ -65,7 +65,7 @@ class MacApplication extends \SplFileInfo
   }
 
   /**
-   * @return SemanticVersion|Version|null
+   * @return SemanticVersion|null
    */
   public function getVersion()
   {

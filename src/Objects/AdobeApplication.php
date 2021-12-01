@@ -68,7 +68,7 @@ class AdobeApplication extends MacApplication
 
             if (file_exists($file))
             {
-              return new AdobeApplication(dirname(dirname($file)));
+              return new AdobeApplication(dirname($file, 2));
             }
           }
         }
@@ -79,7 +79,7 @@ class AdobeApplication extends MacApplication
   }
 
   /**
-   * @return false|string
+   * @return false|SemanticVersion
    */
   public function getBaseVersion()
   {
@@ -113,7 +113,7 @@ class AdobeApplication extends MacApplication
     {
       $info = $this->getAdobeAppInfo($this->getSlug());
 
-      $this->_sap = isset($info['sap']) ? $info['sap'] : false;
+      $this->_sap = $info['sap'] ?? false;
     }
 
     return $this->_sap;
@@ -218,13 +218,13 @@ class AdobeApplication extends MacApplication
                     $tYear = $year;
                   }
 
-                  $paths[] = dirname(dirname($template));
+                  $paths[] = dirname($template, 2);
                 }
               }
             }
 
             $names[]    = $tInfo['productName'];
-            $bVer[$ver] = isset($tYear) ? $tYear : $tInfo['productName'];
+            $bVer[$ver] = $tYear ?? $tInfo['productName'];
           }
         }
       }
