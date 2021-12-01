@@ -9,19 +9,35 @@
             "email": "am@jonesiscoding.com"
         }
     ],
-    "version": "1.7.3",
+    "version": "1.8",
     "autoload": {
         "psr-4": {
             "DevCoding\\Mac\\": "src"
         }
     },
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "deviscoding/objection",
+                "version": "dev-master",
+                "source": {
+                    "url": "https://github.com/deviscoding/objection",
+                    "type": "git",
+                    "reference": "main"
+                }
+            }
+        }
+    ],
     "require": {
         "php": "^7.0",
         "ext-json": "*",
         "ext-posix": "*",
         "jonesiscoding/base-console": "^4.4",
-        "phlak/semver": "^3.2",
         "symfony/process": "^4.4",
-        "symfony/yaml": "^4.4"
+        "symfony/yaml": "^4.4",
+        "deviscoding/objection": "dev-master"
     }
 }
