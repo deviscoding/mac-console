@@ -75,7 +75,7 @@ class CreativeCloudHelper
           'name'        => 'Bridge',
           'preferences' => [
               0 => 'Library/Preferences/Adobe/Bridge/{version}',
-              1 => 'Library/Preferences/com.adobe.bridge{major}.plist',
+              1 => 'Library/Preferences/com.adobe.bridge{majorVersion}.plist',
           ],
           'baseVersions' => [
               '7.0'  => '2017',
