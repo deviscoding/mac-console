@@ -233,7 +233,7 @@ class CreativeCloudHelper
   }
 
   /**
-   * Returns the uninstall arguments as an array, using the given slug.
+   * Returns the uninstallation arguments as an array, using the given slug.
    *
    * @param string $slug
    *
@@ -404,7 +404,10 @@ class CreativeCloudHelper
   {
     if (preg_match('#/Adobe (?<name>[a-zA-Z\s]+)\s?(?<year>[1-9][0-9]+)?/#', $path, $m))
     {
-      return ['name' => $m['name'] ?? null, 'year' => $m['year'] ?? null];
+      $name = isset($m['name']) ? trim($m['name']) : null;
+      $year = isset($m['year']) ? trim($m['year']) : null;
+
+      return ['name' => $name, 'year' => $year];
     }
 
     return [];
