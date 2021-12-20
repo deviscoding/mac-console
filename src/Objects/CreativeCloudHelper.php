@@ -179,9 +179,9 @@ class CreativeCloudHelper
   public function getPreferences(AdobeApplication $app)
   {
     $paths = [];
-    if ($templates = $this->data[$app->getSlug()])
+    if ($templates = $this->data[$app->getSlug()]['preferences'])
     {
-      $find = ['{name}', '{year}'];
+      $find = ['{name}', '{year}', '{version}', '{baseVersion}', '{majorVersion}'];
       $repl = [$app->getName(), $app->getYear(), $app->getVersion(), $app->getBaseVersion(), $app->getVersion()->getMajor()];
 
       foreach ($templates as $pathTemplate)
