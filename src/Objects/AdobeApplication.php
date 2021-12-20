@@ -2,29 +2,25 @@
 
 namespace DevCoding\Mac\Objects;
 
+/**
+ * Object representing an Adobe Creative Cloud application that is installed on macOS.
+ *
+ * @author  AMJones <am@jonesiscoding.com>
+ * @license https://github.com/deviscoding/jss-helper/blob/main/LICENSE
+ */
 class AdobeApplication extends MacApplication
 {
-  const PATH_TEMPLATES = [
-      '/Applications/Adobe {name} {year}/Adobe {name} {year}.app/Contents/Info.plist',
-      '/Applications/Adobe {name} {year}/Adobe {name}.app/Contents/Info.plist',
-      '/Applications/Adobe {name}/Adobe {name}.app/Contents/Info.plist',
-      '/Applications/Adobe {name} CC/Adobe {name}.app/Contents/Info.plist',
-  ];
+  const PATH_TEMPLATES = CreativeCloudHelper::PATH_TEMPLATES;
+  const UNINSTALL      = '/Library/Application\ Support/Adobe/Adobe\ Desktop\ Common/HDBox/Setup --uninstall=1 --sapCode={sap} --baseVersion={version} --deleteUserPreferences=false --platform=osx10-64';
 
-  const UNINSTALL = '/Library/Application\ Support/Adobe/Adobe\ Desktop\ Common/HDBox/Setup --uninstall=1 --sapCode={sap} --baseVersion={version} --deleteUserPreferences=false --platform=osx10-64';
-
-  /** @var array[] */
-  protected $_appInfo;
-  /** @var string */
-  protected $_sap;
   /** @var SemanticVersion */
-  protected $_baseVersion;
-  /** @var int */
-  protected $_year;
-  /** @var bool */
-  protected $_cc;
+  protected $baseVersion;
   /** @var string */
-  protected $_slug;
+  protected $name;
+  /** @var string */
+  protected $slug;
+  /** @var string */
+  protected $year;
 
   /**
    * @param string   $slug
@@ -41,65 +37,71 @@ class AdobeApplication extends MacApplication
       $slug = $matches[1];
     }
 
-    if ($info = self::getAppInfoFromAdbArg($slug))
+    $Helper = new CreativeCloudHelper();
+    foreach ($Helper->getInstalled($slug) as $path)
     {
-      // Turn the provided year into an array, or get from baseVersions, including only numeric.
-      if (!empty($year) || empty($info['baseVersions']))
+      if (!$year || $year == $Helper->getYearFromPath($path))
       {
-        $years = [$year];
-      }
-      else
-      {
-        $years = array_filter(
-            array_values($info['baseVersions']),
-            function ($v) {
-              return is_numeric($v);
-            }
-        );
-      }
-
-      foreach ($info['names'] as $name)
-      {
-        foreach (self::PATH_TEMPLATES as $tmpl)
-        {
-          foreach ($years as $tYear)
-          {
-            $file = str_replace(['{name}', '{year}'], [$name, $tYear], $tmpl);
-
-            if (file_exists($file))
-            {
-              return new AdobeApplication(dirname($file, 2));
-            }
-          }
-        }
+        return new AdobeApplication(dirname($path, 2));
       }
     }
 
     return null;
   }
 
+  // region //////////////////////////////////////////////// Public Methods
+
   /**
-   * @return false|SemanticVersion
+   * @return SemanticVersion|false
    */
   public function getBaseVersion()
   {
-    if (is_null($this->_baseVersion))
+    if (is_null($this->baseVersion))
     {
-      $info = $this->getAdobeAppInfo($this->getSlug());
+      $base = $this->getHelper()->getBaseVersions($this->getSlug());
       $year = $this->getYear();
+      $name = $this->getBaseName();
 
-      foreach ($info['baseVersions'] as $baseVersion => $bYear)
+      foreach ($base as $bVer => $bYear)
       {
-        if ($bYear == $year)
+        if ($bYear == $year || $bYear == $name)
         {
-          $ver = $baseVersion;
+          return $this->baseVersion = new SemanticVersion($bVer);
         }
       }
 
-      $this->_baseVersion = isset($ver) ? new SemanticVersion($ver) : false;
+      $this->baseVersion = false;
     }
 
-    return $this->_baseVersion;
+    return $this->baseVersion;
+  }
+
+  /**
+   * Returns an array of paths to this application's preferences.
+   *
+   * @return string[]
+   */
+  public function getPreferencePaths()
+  {
+    return $this->getHelper()->getPreferences($this);
+  }
+
+  /**
+   * Returns the base name of the application, such as 'Photoshop' for 'Adobe Photoshop 2022'
+   *
+   * @return string
+   */
+  public function getProductName()
+  {
+    if (!isset($this->name))
+    {
+      if (!$this->name = $this->getHelper()->getName($this->getSlug()))
+      {
+        $this->name = $this->getHelper()->getNameFromPath($this->getPathname());
+      }
+    }
+
+    return $this->name;
   }
 
   /**
@@ -109,19 +111,27 @@ class AdobeApplication extends MacApplication
    */
   public function getSap()
   {
-    if (is_null($this->_sap))
+    if (!isset($this->sap))
     {
-      $info = $this->getAdobeAppInfo($this->getSlug());
-
-      $this->_sap = $info['sap'] ?? false;
+      $this->sap = $this->getHelper()->getSap($this->getSlug()) ?? false;
     }
 
-    return $this->_sap;
+    return $this->sap;
   }
 
+  /**
+   * Returns the slug for the application, such as 'photoshop' for 'Adobe Photoshop 2022'
+   *
+   * @return string|null
+   */
   public function getSlug()
   {
-    return $this->setFromPathName()->_slug;
+    if (!isset($this->slug))
+    {
+      $this->slug = $this->getHelper()->getNameFromPath($this->getPathname());
+    }
+
+    return $this->slug;
   }
 
   /**
@@ -134,112 +144,43 @@ class AdobeApplication extends MacApplication
     return str_replace(['{sap}', '{version}'], [$this->getSap(), $this->getBaseVersion()->getRaw()], self::UNINSTALL);
   }
 
+  /**
+   * If applicable, returns the year that is relevant to this Adobe Creative Cloud application.
+   *
+   * @return string|null
+   */
   public function getYear()
   {
-    return $this->setFromPathName()->_year;
+    if (!isset($this->year))
+    {
+      $this->year = $this->getHelper()->getYearFromPath($this->getPathname()) ?? false;
+    }
+
+    return $this->year;
   }
 
+  /**
+   * Evaluates whether CC is present in the application's name and path.
+   *
+   * @return bool
+   */
   public function isCC()
   {
-    return $this->setFromPathName()->_cc;
+    return false !== strpos($this->getPathname(), 'CC');
   }
 
-  // region //////////////////////////////////////////////// Helper Functions
+  // endregion ///////////////////////////////////////////// Public Methods
 
-  protected function setFromPathName()
+  // region //////////////////////////////////////////////// Helper Methods
+
+  /**
+   * @return CreativeCloudHelper
+   */
+  protected function getHelper()
   {
-    if (!isset($this->_cc, $this->_year, $this->_slug))
-    {
-      if (preg_match('/\/Adobe\s(?<name>[a-zA-Z\s]+)\s?(?<year>[0-9]{4})?\//', $this->getPathname(), $matches))
-      {
-        $this->_cc   = (false !== strpos($matches['name'], 'CC'));
-        $this->_year = $matches['year'];
-        $this->_slug = $this->normalizeKey(trim(str_replace(' CC', '', $matches['name'])));
-      }
-    }
-
-    return $this;
+    return new CreativeCloudHelper();
   }
 
-  protected function getAdobeAppInfo($name)
-  {
-    if (empty($this->_appInfo[$name]))
-    {
-      $this->_appInfo[$name] = $this->getAppInfoFromAdbArg($name);
-    }
-
-    return $this->_appInfo[$name];
-  }
-
-  private static function getAppInfoFromAdbArg($str)
-  {
-    $dir   = '/Library/Application Support/Adobe/Uninstall';
-    $years = ['2015', '2017', '2018', '2018', '2019', '2020', '2021', '2022'];
-    $bVer  = [];
-    $names = [];
-    $paths = [];
-
-    if (is_dir($dir))
-    {
-      foreach (glob($dir.'/*.adbarg') as $adbarg)
-      {
-        $contents = file_get_contents($adbarg);
-        $lines    = explode("\n", $contents);
-        $tInfo    = [];
-        unset($tYear);
-        foreach ($lines as $line)
-        {
-          if (preg_match('#^--([^=]+)=(.*)$#', $line, $matches))
-          {
-            $key         = $matches[1];
-            $tInfo[$key] = $matches[2];
-          }
-        }
-
-        if (!empty($tInfo['productName']))
-        {
-          $tStr = static::normalizeKey($tInfo['productName']);
-          if ($tStr == $str)
-          {
-            $nme = $tInfo['productName'];
-            $sap = !empty($tInfo['sapCode']) ? $tInfo['sapCode'] : null;
-            $ver = !empty($tInfo['productVersion']) ? $tInfo['productVersion'] : null;
-
-            foreach (self::PATH_TEMPLATES as $template)
-            {
-              foreach ($years as $year)
-              {
-                $plist = str_replace(['{name}', '{year}'], [$nme, $year], $template);
-
-                if (file_exists($plist))
-                {
-                  if (false !== strpos($plist, $year))
-                  {
-                    $tYear = $year;
-                  }
-
-                  $paths[] = dirname($template, 2);
-                }
-              }
-            }
-
-            $names[]    = $tInfo['productName'];
-            $bVer[$ver] = $tYear ?? $tInfo['productName'];
-          }
-        }
-      }
-    }
-
-    if (isset($sap) && !empty($names) && !empty($bVer) && !empty($paths))
-    {
-      return ['sap' => $sap, 'names' => $names, 'baseVersions' => $bVer, 'path' => array_unique($paths)];
-    }
-
-    return null;
-  }
-
-  private static function normalizeKey($key)
-  {
-    return str_replace([' ', '_'], '-', strtolower($key));
-  }
+  // endregion ///////////////////////////////////////////// Helper Methods
 }
+
