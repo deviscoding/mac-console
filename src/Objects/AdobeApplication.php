@@ -128,7 +128,7 @@ class AdobeApplication extends MacApplication
   {
     if (!isset($this->slug))
     {
-      $this->slug = $this->getHelper()->getNameFromPath($this->getPathname());
+      $this->slug = $this->getHelper()->getSlugFromPath($this->getPathname());
     }
 
     return $this->slug;
@@ -183,4 +183,3 @@ class AdobeApplication extends MacApplication
 
   // endregion ///////////////////////////////////////////// Helper Methods
 }
-
