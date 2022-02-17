@@ -135,8 +135,25 @@ abstract class AbstractMacConsole extends AbstractConsole
   {
     if ($v = $this->getOs()->getVersion())
     {
-      // In some early testing, the version returned was 10.18 or something silly
-      if (11 == $v->getMajor() || 10 == $v->getMajor() && $v->getMinor() >= 16)
+      if ($v->getMajor() >= 11)
+      {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Determines if the OS version is Big Sur or greater.
+   *
+   * @return bool
+   */
+  protected function isMontereyUp()
+  {
+    if ($v = $this->getOs()->getVersion())
+    {
+      if ($v->getMajor() >= 12)
       {
         return true;
       }
@@ -154,7 +171,7 @@ abstract class AbstractMacConsole extends AbstractConsole
   {
     if ($v = $this->getOs()->getVersion())
     {
-      if (11 == $v->getMajor() || 10 == $v->getMajor() && $v->getMinor() >= 15)
+      if ($v->getMajor() >= 11 || (10 == $v->getMajor() && $v->getMinor() >= 15))
       {
         return true;
       }
@@ -172,7 +189,7 @@ abstract class AbstractMacConsole extends AbstractConsole
   {
     if ($v = $this->getOs()->getVersion())
     {
-      if (11 == $v->getMajor() || 10 == $v->getMajor() && $v->getMinor() >= 14)
+      if ($v->getMajor() >= 11 || (10 == $v->getMajor() && $v->getMinor() >= 14))
       {
         return true;
       }
@@ -260,7 +277,9 @@ abstract class AbstractMacConsole extends AbstractConsole
 
   protected function getLaunchMethod()
   {
-    return $this->getOs()->getVersion()->getMinor() <= 9 ? 'bsexec' : 'asuser';
+    $version = $this->getOs()->getVersion();
+
+    return ($version->getMajor() > 10 || $version->getMinor() > 9) ? 'asuser' : 'bsexec';
   }
 
   /**
