@@ -9,7 +9,7 @@
             "email": "am@jonesiscoding.com"
         }
     ],
-    "version": "1.11",
+    "version": "1.12",
     "autoload": {
         "psr-4": {
             "DevCoding\\Mac\\": "src"
